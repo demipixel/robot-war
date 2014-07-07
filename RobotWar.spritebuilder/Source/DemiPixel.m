@@ -37,6 +37,10 @@ typedef NS_ENUM(NSInteger, RobotState) {
     
     float searchAmount;
     bool searchLeft;
+    bool moveLeft;
+    
+    CCNodeColor *_enemyLocation;
+    CCNodeColor *_ourLastLocation;
 }
 
 const bool LOG = TRUE; // Everything
@@ -52,68 +56,41 @@ const bool LOG_NEW_LOCATION = FALSE;
     _currentState = RobotStateSearching;
     searchLeft = true;
     [self logChange];
+    _enemyLocation = [CCNodeColor nodeWithColor:[CCColor greenColor] width:10.f height:10.f];
+    _ourLastLocation = [CCNodeColor nodeWithColor:[CCColor orangeColor] width:10.f height:10.f];
+    [[self.robotNode parent] addChild:_ourLastLocation];
+    [[self.robotNode parent] addChild:_enemyLocation];
+    
+    [self turnGunRight:35];
+    for (int i = 0; i < 3; i++) {
+        [self shoot];
+    }
+    
     while (true) {
         
-        
-        CGFloat width = [UIScreen mainScreen].bounds.size.width;
-        CGFloat height = [UIScreen mainScreen].bounds.size.height;
-//        
-//        int distanceFromWall;
-//        float refAngle = [self angleForX:self.gunHeadingDirection.x y:self.gunHeadingDirection.y];
-//        
-//        if (refAngle < 90) {
-//            distanceFromWall = width - [self robotNode].position.x;
-//            refAngle = 180 - refAngle;
-//            distanceFromWall = 5;
-//        }
-//        else {
-//            distanceFromWall = [self robotNode].position.x;
-//        }
-//        
-//        
-//        
-//        float aimLength = abs(distanceFromWall / cos(refAngle * M_PI / 180));
-//        NSLog(@"Aim length: %f", aimLength);
-        
-//        float posX = [self robotNode].position.x;
-//        float posY = [self robotNode].position.y;
-//        
-//        NSArray *corner = @[];
-//        
-//        if (posX > width/2 && posY > height/2) {
-//            corner = ccp(width,height);
-//        } else if (posX > width/2 && posY < height/2){
-//            corner = ccp(width,0);
-//        } else if (posX < width/2 && posY > height/2) {
-//            corner = ccp(0,height);
-//        } else {
-//            corner = ccp(0,0);
-//        }
-//        
-//        if (abs([self angleBetweenGunHeadingDirectionAndWorldPosition:corner]) < 25) searchLeft = !searchLeft;
-        
-        
-        
-        
+        [_enemyLocation setPosition:_lastEnemyPosition];
         
         if (_currentState != RobotStateSearching) searchAmount = 0;
         
-        if ([self currentTimestamp] - _lastDetectedTime > 4.f) {
+        if (_currentState != RobotStateSearching && [self currentTimestamp] - _lastDetectedTime > 8.f) {
             _currentState = RobotStateSearching;
+            searchLeft = !searchLeft;
             [self logChange];
             _hitStreak = 0;
         }
         
         if (_currentState == RobotStateShootAndRun) {
-            if (_hitStreak >= 1) {
+            if (_hitStreak >= 4) {
                 _currentState = RobotStateRapidFire;
                 [self logChange];
             }
-            [self cancelActiveAction];
+            //[self cancelActiveAction];
             [self aimGunAtPoint:_lastEnemyPosition];
             [self shoot];
             int width = self.robotBoundingBox.size.width;
-            if (enemyHealth >= health) [self moveAhead:width*2];
+            if (enemyHealth - 1 > health) {
+                moveLeft ? [self moveBack:width * 2] : [self moveAhead:width * 2];
+            }
         }
         else if (_currentState == RobotStateRapidFire) {
             [self cancelActiveAction];
@@ -166,15 +143,18 @@ const bool LOG_NEW_LOCATION = FALSE;
 
 - (void)turnGunSearchDirection:(int)amt {
     if (searchLeft) [self turnGunLeft:amt];
-    if (!searchLeft) [self turnGunRight:amt];
+    else [self turnGunRight:amt];
 }
 
 - (void)scannedRobot:(Robot *)robot atPosition:(CGPoint)position {
+    [_ourLastLocation setPosition:[self robotNode].position];
     _lastEnemyPosition = position;
     if (LOG && LOG_NEW_LOCATION) NSLog(@"New Enemy Location");
     //if (health < enemyHealth) { _currentState = RobotStateEscape; [self logChange]; }
     _lastDetectedTime = [self currentTimestamp];
-    if (_currentState == RobotStateSearching) _currentState = RobotStateShootAndRun;
+    if (_currentState == RobotStateSearching) {
+        _currentState = RobotStateShootAndRun;
+    }
     if (abs(position.x - [self robotNode].position.y) < 50 &&
         abs(position.y - [self robotNode].position.y) < 50) {
         [self logChange];
@@ -182,7 +162,6 @@ const bool LOG_NEW_LOCATION = FALSE;
 }
 
 - (void)logChange {
-    if (_currentState == RobotStateSearching) searchLeft = !searchLeft;
     if (LOG && LOG_STATE) {
         switch (_currentState) {
             case RobotStateRapidFire: NSLog(@"Rapid Fire"); break;
@@ -195,7 +174,7 @@ const bool LOG_NEW_LOCATION = FALSE;
 
 - (void)bulletHitEnemy:(Bullet *)bullet {
     enemyHealth--;
-    if (health > enemyHealth) { _hitStreak = 2; [self cancelActiveAction]; } // Go to Rapid Fire
+    //if (health > enemyHealth) { _hitStreak = 2; [self cancelActiveAction]; } // Go to Rapid Fire
     _lastEnemyPosition = bullet.position;
     if (LOG && LOG_NEW_LOCATION) NSLog(@"New Enemy Location");
     _lastDetectedTime = [self currentTimestamp];
@@ -240,7 +219,16 @@ const bool LOG_NEW_LOCATION = FALSE;
 //        default:
 //            break;
 //    }
-    [self moveBack:250];
+    [self cancelActiveAction];
+    /*if (self.robotBoundingBox.origin.x < [UIScreen mainScreen].bounds.size.width / 2) {
+        [self moveBack:50];
+    }
+    else {
+        [self moveAhead:50];
+    }*/
+    moveLeft = !moveLeft;
+    int width = self.robotBoundingBox.size.width;
+    moveLeft ? [self moveBack:width * 2.5] : [self moveAhead:width * 2.5];
 }
 
 - (void)turnToAngle:(float)angle {
@@ -259,7 +247,17 @@ const bool LOG_NEW_LOCATION = FALSE;
     health--;
     int width = self.robotBoundingBox.size.width;
     // [self cancelActiveAction];
-    if (_hitStreak < 2 && hitCount >= 2) { [self moveAhead:width]; hitCount = 0; }
+    if (_currentState != RobotStateRapidFire && (hitCount >= 2 || health == 1)) {
+        hitCount = 0;
+        [self cancelActiveAction];
+        if (self.robotBoundingBox.origin.x < [UIScreen mainScreen].bounds.size.width / 2) {
+            [self moveBack:50];
+        }
+        else {
+            [self moveAhead:50];
+        }
+        
+    }
     if (_currentState == RobotStateRapidFire && health != enemyHealth) {
         _hitStreak -= 1;
         if (_hitStreak < 0) _hitStreak = 0;
