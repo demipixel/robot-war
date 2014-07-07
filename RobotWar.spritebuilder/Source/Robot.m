@@ -179,6 +179,10 @@
 
 #pragma mark - Info
 
+- (NSInteger)hitPoints {
+  return self.health;
+}
+
 - (CGPoint)headingDirection {
   return [self directionFromRotation:_body.rotation];
 }
@@ -220,6 +224,10 @@
 
 - (CGRect)robotBoundingBox {
   return self.robotNode.boundingBox;
+}
+
+- (CGPoint)position {
+  return self.robotNode.position;
 }
 
 #pragma mark - Events

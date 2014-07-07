@@ -29,10 +29,10 @@ typedef NS_ENUM(NSInteger, RobotWallHitDirection) {
  */
 
 /*
-All of the following event handlers are called with a high priority. If an event handler calls 'cancelActiveAction'
-the currently running action of a robot will be stopped immediately. Any commands to the robot after this cancellation
-will also be performed immediately.
-*/
+ All of the following event handlers are called with a high priority. If an event handler calls 'cancelActiveAction'
+ the currently running action of a robot will be stopped immediately. Any commands to the robot after this cancellation
+ will also be performed immediately. Code running within the event handlers, such as movements, etc. will block further events from being called, until that action has been completed. Therefore you should avoid performing long actions directly in event handlers and instead set a state variable for your robot and run the behaviour from within the run method.
+ */
 
 
 /*!
@@ -46,7 +46,8 @@ will also be performed immediately.
 /*! 
  @method 
  
- This method is called when another robot has been detected.
+ This method is called when another robot has been detected. Another robot is detected if it
+ is within 150 points of your robot.
  
  @param robot
   Shallow copy of the robot that has been scanned. You can only access the class name
@@ -177,10 +178,23 @@ Moves the robot backwards in the direction opposite to the one it is currently h
 /*!
  @method
  
+ @return Returns the robot's hit points
+ */
+- (NSInteger)hitPoints;
+
+/*!
+ @method
+ 
  @return Returns the bounding box of this robot in world coordinates. 
-  This can be used to retrieve the robots world position.
  */
 - (CGRect)robotBoundingBox;
+
+/*!
+ @method
+ 
+ @return Returns the position of this robot in world coordinates.
+ */
+- (CGPoint)position;
 
 /*!
  @method
