@@ -61,9 +61,10 @@ const bool LOG_NEW_LOCATION = FALSE;
     [[self.robotNode parent] addChild:_ourLastLocation];
     [[self.robotNode parent] addChild:_enemyLocation];
     
-    [self turnGunRight:35];
+    [self turnGunRight:25];
     for (int i = 0; i < 3; i++) {
         [self shoot];
+        [self turnGunRight:10];
     }
     
     while (true) {
