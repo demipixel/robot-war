@@ -5,36 +5,36 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>B1216208-4822-48CE-B55D-9F381B305966</string>
+	<string>1FC66E4E-171F-4A6D-8792-C1BF79037962</string>
 	<key>IDESourceControlProjectName</key>
 	<string>RobotWar</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>798BC64F-EF8B-485D-905D-BF0972BFA231</key>
-		<string>https://github.com/demipixel/robot-war.git</string>
+		<key>79ACF343-B2BF-43BD-AEA4-CF5177D6C5B0</key>
+		<string>https://github.com/demipixel/robot-war</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>RobotWar.spritebuilder/RobotWar.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>798BC64F-EF8B-485D-905D-BF0972BFA231</key>
+		<key>79ACF343-B2BF-43BD-AEA4-CF5177D6C5B0</key>
 		<string>../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>https://github.com/demipixel/robot-war.git</string>
+	<string>https://github.com/demipixel/robot-war</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>110</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>798BC64F-EF8B-485D-905D-BF0972BFA231</string>
+	<string>79ACF343-B2BF-43BD-AEA4-CF5177D6C5B0</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>798BC64F-EF8B-485D-905D-BF0972BFA231</string>
+			<string>79ACF343-B2BF-43BD-AEA4-CF5177D6C5B0</string>
 			<key>IDESourceControlWCCName</key>
-			<string>robot-war</string>
+			<string>Robot Wars</string>
 		</dict>
 	</array>
 </dict>
